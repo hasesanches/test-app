@@ -1,8 +1,17 @@
-# nordclan-test-app
+# Test app Vue + Vuex
 
-> User payment app
+> Test application that allows you to add payments. It is possible to register and log in with your username.
+
 
 ## Build Setup
+
+``` bash
+#  The application used
+1. vue
+2. vuex
+3. vue-router
+4. vue-material
+```
 
 ``` bash
 # install dependencies
