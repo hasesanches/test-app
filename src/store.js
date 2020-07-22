@@ -2,7 +2,6 @@ import Vuex from "vuex";
 import Axios from 'axios'
 import Vue from "vue";
 import moment from 'moment';
-import CryptoJS from 'crypto-js';
 
 Vue.use(Vuex);
 
@@ -45,6 +44,9 @@ export default new Vuex.Store({
             state.status = '';
             state.token = '';
         },
+        set_users(state, users) {
+            state.users = users;
+        },
         set_payments_request(state) {
             state.status_payments = 'loading'
         },
@@ -54,7 +56,12 @@ export default new Vuex.Store({
 
             state.user.prise = 0;
             state.payments.forEach(function (item, index, array) {
-                if (item.id_user === state.user.id) state.user.prise += +item.prise;
+                if (item.id_user === state.user.id) {
+                    state.user.prise += +item.prise;
+                }
+                item.user = state.users.filter(function (user) {
+                    return item.id_user === user.id
+                })[0]
             });
         },
         set_payments_error(state) {
@@ -72,6 +79,9 @@ export default new Vuex.Store({
             state.user.prise = 0;
             state.payments.forEach(function (item, index, array) {
                 if (item.id_user === state.user.id) state.user.prise += +item.prise;
+                item.user = state.users.filter(function (user) {
+                    return item.id_user === user.id
+                })[0]
             });
         },
         delete_payments(state, payment) {
@@ -80,7 +90,12 @@ export default new Vuex.Store({
 
             state.user.prise = 0;
             state.payments.forEach(function (item, index, array) {
-                if (item.id_user === state.user.id) state.user.prise += +item.prise;
+                if (item.id_user === state.user.id) {
+                    state.user.prise += +item.prise;
+                }
+                item.user = state.users.filter(function (user) {
+                    return item.id_user === user.id
+                })[0]
             });
         },
         edit_payments(state, payment) {
@@ -90,6 +105,9 @@ export default new Vuex.Store({
             state.user.prise = 0;
             state.payments.forEach(function (item, index, array) {
                 if (item.id_user === state.user.id) state.user.prise += +item.prise;
+                item.user = state.users.filter(function (user) {
+                    return item.id_user === user.id
+                })[0]
             });
         }
     },
@@ -98,12 +116,16 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 Axios({url: 'https://5f1046a700d4ab0016134b25.mockapi.io/user', method: 'GET'})
                     .then(resp => {
-                        let user = resp.data.find(u => u.token === state.token);
+                        let users = resp.data;
+                        let user = users.find(u => u.token === state.token);
 
                         Axios({url: 'https://5f1046a700d4ab0016134b25.mockapi.io/payments', method: 'GET'})
                             .then(resp => {
+                                let payments = resp.data;
+
                                 commit('auth_success', user);
-                                commit('set_payments', resp.data);
+                                commit('set_users', users);
+                                commit('set_payments', payments);
                                 resolve()
                             })
                             .catch(err => {
@@ -172,13 +194,15 @@ export default new Vuex.Store({
 
                 Axios({url: 'https://5f1046a700d4ab0016134b25.mockapi.io/user', method: 'GET'})
                     .then(resp => {
+
+                        commit('set_users', resp.data);
+
                         let user = resp.data.find(function (item) {
                             // console.log(CryptoJS.AES.encrypt(data.password, "42709472039").toString(), item.password, CryptoJS.AES.decrypt(item.password, "42709472039").toString());
 
                             return item.email === data.email && item.password === data.password
                         });
-                        console.log(user)
-                        if(!user) {
+                        if (!user) {
                             commit('auth_error');
                             return reject();
                         }

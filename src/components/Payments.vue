@@ -35,6 +35,12 @@
             <md-table-row slot="md-table-row" slot-scope="{ item }">
                 <!--<md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>-->
                 <md-table-cell md-label="Date created" md-sort-by="createdAt">{{ item.createdAt | moment("dddd, MMMM Do YYYY, h:mm:ss") }}</md-table-cell>
+                <md-table-cell md-label="Author" md-sort-by="">
+                    <md-avatar>
+                        <img :src="item.user.avatar" alt="Avatar">
+                        <md-tooltip md-direction="bottom">Name: {{ item.user.name }} Email: {{ item.user.email }}</md-tooltip>
+                    </md-avatar>
+                </md-table-cell>
                 <md-table-cell md-label="Title" md-sort-by="title">{{ item.title }}</md-table-cell>
                 <md-table-cell md-label="Prise" md-sort-by="prise">{{ item.prise }}</md-table-cell>
                 <md-table-cell md-label="Comment" md-sort-by="comment">{{ item.comment }}</md-table-cell>
